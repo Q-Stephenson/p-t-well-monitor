@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(well-monitor well-monitor.cpp )
+add_executable(well-monitor well-monitor.cpp motor.cpp)
 
 pico_set_program_name(well-monitor "well-monitor")
 pico_set_program_version(well-monitor "0.1")
@@ -46,7 +46,8 @@ pico_enable_stdio_usb(well-monitor 0)
 
 # Add the standard library to the build
 target_link_libraries(well-monitor
-        pico_stdlib)
+        pico_stdlib
+        hardware_spi)
 
 # Add the standard include files to the build
 target_include_directories(well-monitor PRIVATE
