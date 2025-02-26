@@ -8,12 +8,16 @@
 
 int main()
 {
-    motor::init();
+    Motor motor;
+    motor.init();
 
     // Loop indefinitely
     while (1)
     {
-        motor::step();
+        motor.step(6.28);
+        motor.stop();
+        sleep_ms(1000);
+        motor.step(-6.28);
     }
 
     return 0;
