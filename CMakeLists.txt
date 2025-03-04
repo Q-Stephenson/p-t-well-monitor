@@ -47,7 +47,8 @@ pico_enable_stdio_usb(well-monitor 0)
 # Add the standard library to the build
 target_link_libraries(well-monitor
         pico_stdlib
-        hardware_spi)
+        hardware_spi
+        hardware_flash)
 
 # Add the standard include files to the build
 target_include_directories(well-monitor PRIVATE
@@ -57,6 +58,7 @@ target_include_directories(well-monitor PRIVATE
 # Add any user requested libraries
 target_link_libraries(well-monitor 
         hardware_spi
+        hardware_flash
         )
 
 pico_add_extra_outputs(well-monitor)
