@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(well-monitor well-monitor.cpp motor.cpp)
+add_executable(well-monitor well-monitor.cpp motor.cpp save.cpp)
 
 pico_set_program_name(well-monitor "well-monitor")
 pico_set_program_version(well-monitor "0.1")

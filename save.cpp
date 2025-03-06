@@ -23,5 +23,5 @@ void save::save(){
 
 void save::read(){
     const uint8_t* flash_target_contents = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
-    memcpy(&sysData, flash_target_contents + FLASH_PAGE_SIZE, sizeof(sysData));
+    memcpy(&sysData, flash_target_contents + FLASH_PAGE_SIZE, sizeof(flash_target_contents + FLASH_PAGE_SIZE));
 }

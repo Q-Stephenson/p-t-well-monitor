@@ -82,6 +82,8 @@ void Motor::step(){
     sleep_ms(3);
 
     steps++;
+    save::sysData.steps = steps;
+    save::save();
 }
 
 void Motor::backstep(){        
@@ -115,4 +117,6 @@ void Motor::backstep(){
     sleep_ms(3);
 
     steps--;
+    save::sysData.steps = steps;
+    save::save();
 }
