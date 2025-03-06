@@ -9,8 +9,12 @@
 
 int main()
 {
-    Motor motor;
+    save::read();
+
+    Motor motor(save::sysData.steps);
     motor.init();
+
+    motor.step(-motor.getSteps());
 
     // Loop indefinitely
     while (1)
@@ -19,6 +23,8 @@ int main()
         motor.stop();
         sleep_ms(1000);
         motor.step(-6.28);
+        save::sysData.steps = motor.getSteps();
+        save::save();
     }
 
     return 0;

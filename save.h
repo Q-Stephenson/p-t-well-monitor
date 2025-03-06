@@ -6,6 +6,8 @@
 #include <hardware/flash.h> // for the flash erasing and writing
 #include <hardware/sync.h> // for the interrupts
 
+#define FLASH_TARGET_OFFSET (512 * 1024) // choosing to start at 512K
+
 namespace save{
     struct SystemData{
         int steps = 0;

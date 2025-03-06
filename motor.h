@@ -16,7 +16,7 @@ public:
     Motor();
     Motor(int stepCount);
 
-    int getStep(){return steps;}
+    int getSteps(){return steps;}
 
     void init();
     void step();
