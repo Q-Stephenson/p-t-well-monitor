@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <pico/stdlib.h>
 #include <hardware/gpio.h>
+#include <string>
 #include "motor.h"
 
 // Stepper motor connection pins
@@ -8,10 +9,13 @@
 
 int main()
 {
+    stdio_init_all();
+
     save::read();
 
     Motor motor(save::sysData.steps);
     motor.init();
+    printf("%s", std::to_string(motor.getSteps()).c_str());
 
     motor.step(-motor.getSteps());
 

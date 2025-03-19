@@ -1,6 +1,6 @@
 #include "save.h"
 #include <cstring>
-#define XIP_BASE _u(0x10000000)
+// #define XIP_BASE _u(0x10000000)
 
 // With a Significant Help from: https://forums.raspberrypi.com/viewtopic.php?t=310821
 
@@ -10,7 +10,7 @@ namespace save{
 
 void save::save(){
     uint8_t* saveBytes = (uint8_t*) &sysData;
-    int saveSize = sizeof(saveBytes);
+    int saveSize = sizeof(sysData);
 
     int writeSize = (saveSize / FLASH_PAGE_SIZE) + 1;
     int sectorCount = ((writeSize * FLASH_PAGE_SIZE) / FLASH_SECTOR_SIZE) + 1;
@@ -21,7 +21,8 @@ void save::save(){
     restore_interrupts(interrupts);
 }
 
-void save::read(){
-    const uint8_t* flash_target_contents = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
-    memcpy(&sysData, flash_target_contents + FLASH_PAGE_SIZE, sizeof(flash_target_contents + FLASH_PAGE_SIZE));
-}
+
+    void save::read(){
+        const uint8_t* flash_target_contents = (const uint8_t *) (XIP_BASE + FLASH_TARGET_OFFSET);
+        memcpy(&sysData, flash_target_contents, sizeof(sysData)); // Corrected line
+    }
