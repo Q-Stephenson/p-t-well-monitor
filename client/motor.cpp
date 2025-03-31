@@ -8,6 +8,14 @@ Motor::Motor(){
     Motor(0);
 }
 
+void Motor::reset(){
+    /*
+    * TODO: Code to go to the limit switch to go here
+    */
+
+    steps = 0;
+}
+
 void Motor::step(double distance, double radius){
     step(distance / (6.28 * radius));
 }
@@ -82,8 +90,6 @@ void Motor::step(){
     sleep_ms(3);
 
     steps++;
-    save::sysData.steps = steps;
-    save::save();
 }
 
 void Motor::backstep(){        
@@ -117,6 +123,4 @@ void Motor::backstep(){
     sleep_ms(3);
 
     steps--;
-    save::sysData.steps = steps;
-    save::save();
 }

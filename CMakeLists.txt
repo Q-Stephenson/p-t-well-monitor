@@ -28,38 +28,11 @@ set(PICO_BOARD pico CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(well-monitor C CXX ASM)
+project(pt-well-monitor C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Add executable. Default name is the project name, version 0.1
-
-add_executable(well-monitor well-monitor.cpp motor.cpp save.cpp)
-
-pico_set_program_name(well-monitor "well-monitor")
-pico_set_program_version(well-monitor "0.1")
-
-# Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(well-monitor 0)
-pico_enable_stdio_usb(well-monitor 1)
-
-# Add the standard library to the build
-target_link_libraries(well-monitor
-        pico_stdlib
-        hardware_spi
-        hardware_flash)
-
-# Add the standard include files to the build
-target_include_directories(well-monitor PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
-)
-
-# Add any user requested libraries
-target_link_libraries(well-monitor 
-        hardware_spi
-        hardware_flash
-        )
-
-pico_add_extra_outputs(well-monitor)
-
+# Include subdirectories for host and client projects
+add_subdirectory(host)
+add_subdirectory(client)
