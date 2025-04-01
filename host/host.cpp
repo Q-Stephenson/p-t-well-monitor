@@ -2,6 +2,8 @@
 
 int main() {
     printf("Host project running...\n");
-    // ...additional host-specific logic...
+    
+    // Define System
+
     return 0;
 }
