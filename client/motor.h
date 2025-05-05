@@ -1,15 +1,20 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 #include <stdio.h>
-#include <pico/stdlib.h>
 #include <hardware/gpio.h>
+#include <Arduino.h>
+
+#define LIMIT_PIN 15
+#define MAX_SPIN_COUNT 4096 /*TODO: FIX*/
+
+#define RADIUS 0.25 /*In Meters*/
 
 class Motor{
 private:
     const static uint IN1 = 0;
-    const static uint IN2 = 2;
-    const static uint IN3 = 3;
-    const static uint IN4 = 4;
+    const static uint IN2 = 1;
+    const static uint IN3 = 2;
+    const static uint IN4 = 3;
     int steps = 0;
 
 public:
@@ -25,7 +30,16 @@ public:
     void step(int num); // Steps num steps
     void step(double radians); // Steps radians
     void step(double meters, double rad); // steps the number of meters provided, given the radius of the wheel, presumes no slipping
+    void goToStep(int num);
     void reset(); // Resets the motor, TODO: uses the limit switch to zero
+    void reclaimPins();
+
+    bool isPressed();
+};
+
+namespace motor_utils{
+    float stepsToMeters(int steps); // Converts Steps to Meters
+    int metersToSteps(float dist); // Converts Meters to Steps
 };
 
 #endif

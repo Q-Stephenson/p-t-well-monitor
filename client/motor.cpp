@@ -4,16 +4,31 @@ Motor::Motor(int stepCounts){
     steps = stepCounts;
 }
 
-Motor::Motor(){
-    Motor(0);
+Motor::Motor() : Motor(0){
+}
+
+void Motor::reclaimPins(){
+    pinMode(LIMIT_PIN,INPUT);
+
+    pinMode(IN1, OUTPUT);
+    pinMode(IN2, OUTPUT);
+    pinMode(IN3, OUTPUT);
+    pinMode(IN4, OUTPUT);
 }
 
 void Motor::reset(){
     /*
     * TODO: Code to go to the limit switch to go here
     */
+    while(isPressed()) backstep();
 
     steps = 0;
+}
+
+bool Motor::isPressed(){
+    /*Implement Is Pressed Code*/
+    if(digitalRead(LIMIT_PIN) == HIGH) return true;
+    return false;
 }
 
 void Motor::step(double distance, double radius){
@@ -33,61 +48,56 @@ void Motor::step(int num){
     }
 }
 
+void Motor::goToStep(int num){
+    Motor::step(num - steps);
+}
+
 void Motor::stop(){
-    gpio_put(IN1, 0);
-    gpio_put(IN2, 0);
-    gpio_put(IN3, 0);
-    gpio_put(IN4, 0);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
 }
 
 void Motor::init(){
     // Initialize the gpio library
-    gpio_init(IN1);
-    gpio_init(IN2);
-    gpio_init(IN3);
-    gpio_init(IN4);
+    Motor::reclaimPins();
 
-    // Set the mode of the pin to output
-    gpio_set_dir(IN1, GPIO_OUT);
-    gpio_set_dir(IN2, GPIO_OUT);
-    gpio_set_dir(IN3, GPIO_OUT);
-    gpio_set_dir(IN4, GPIO_OUT);
+    // Motor reset
+    Motor::reset();
 
     // Set the initial state of the pins to LOW
-    gpio_put(IN1, 0);
-    gpio_put(IN2, 0);
-    gpio_put(IN3, 0);
-    gpio_put(IN4, 0);    
+    Motor::stop();    
 }
 
 void Motor::step(){
     // Step 4
-    gpio_put(IN1, 0);
-    gpio_put(IN2, 0);
-    gpio_put(IN3, 1);
-    gpio_put(IN4, 1);
-    sleep_ms(3);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, HIGH);
+    delay(3);
 
     // Step 3
-    gpio_put(IN1, 0);
-    gpio_put(IN2, 1);
-    gpio_put(IN3, 1);
-    gpio_put(IN4, 0);
-    sleep_ms(3);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    delay(3);
 
     // Step 2
-    gpio_put(IN1, 1);
-    gpio_put(IN2, 1);
-    gpio_put(IN3, 0);
-    gpio_put(IN4, 0);
-    sleep_ms(3);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    delay(3);
 
     // Step 1
-    gpio_put(IN1, 1);
-    gpio_put(IN2, 0);
-    gpio_put(IN3, 0);
-    gpio_put(IN4, 1);
-    sleep_ms(3);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+    delay(3);
 
     steps++;
 }
@@ -95,32 +105,41 @@ void Motor::step(){
 void Motor::backstep(){        
     // Step 1
     
-    gpio_put(IN1, 1);
-    gpio_put(IN2, 0);
-    gpio_put(IN3, 0);
-    gpio_put(IN4, 1);
-    sleep_ms(3); 
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+    delay(3); 
 
     // Step 2
-    gpio_put(IN1, 1);
-    gpio_put(IN2, 1);
-    gpio_put(IN3, 0);
-    gpio_put(IN4, 0);
-    sleep_ms(3);
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    delay(3);
     
     // Step 3
-    gpio_put(IN1, 0);
-    gpio_put(IN2, 1);
-    gpio_put(IN3, 1);
-    gpio_put(IN4, 0);
-    sleep_ms(3);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+    delay(3);
     
     // Step 4
-    gpio_put(IN1, 0);
-    gpio_put(IN2, 0);
-    gpio_put(IN3, 1);
-    gpio_put(IN4, 1);
-    sleep_ms(3);
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, HIGH);
+    delay(3);
 
     steps--;
 }
+
+namespace motor_utils{
+    int metersToSteps(float dist){
+        return (int) (512 * dist / (TWO_PI * TWO_PI * RADIUS));
+    }
+    float stepsToMeters(int steps){
+        return steps * (TWO_PI * TWO_PI * RADIUS) / 512.0;
+    }
+};
