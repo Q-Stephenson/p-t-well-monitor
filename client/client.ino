@@ -5,9 +5,10 @@
 #include <cstring> // Include for memcpy
 #include "RH_RF95.h"
 #include "Message.h"
-// #include "motor.h"
+// #include "motor::h"
 #include "pico/unique_id.h"
 #include "reading.h"
+#include "pico/multicore.h"
 
 // Pin configuration for SPI
 #define PIN_MISO 16
@@ -34,8 +35,6 @@ uint8_t myAdr = 0xff;
 uint8_t serverAdr = 0xff;
 
 bool inSystem = 0;
-
-Motor motor;
 
 uint8_t packetIDGen = 0;
 
@@ -169,20 +168,25 @@ void setup()
   // A BoardID generator
   pico_get_unique_board_id((pico_unique_board_id_t*) &boardID);
 
-  motor.init();
+  motor::init();
+
+  multicore_launch_core1(motor::motorThread);
+
   Serial.println("Completed Setup");
 }
 
 void loop(){
 
-  motor.reclaimPins();
+  motor::reclaimPins();
   handleMSGs();
 
   if(Serial.available()){
     String receivedData = Serial.readString();
     processCMD(receivedData.c_str());
   }
-  
+
+  sleep_ms(1000);
+
   // Serial.println(reading::readV());
   // return;
 
@@ -233,20 +237,20 @@ void handleP2(uint8_t* pbuf, uint8_t len,uint8_t from){
   uint8_t cmd = pbuf[0] & 0x0f;
   Serial.printf("-C%d",cmd);
   switch(cmd){
-    case 0: motor.reset();
+    case 0: motor::reset();
     sendR0(pbuf,from);
     break;
 
-    case 1: motor.stop();
+    case 1: Serial.println("Cannot MOVE");
     sendR0(pbuf,from);
     break;
 
     case 2: 
-    reading::measure(&motor,0xf);
+    reading::measure(0xf);
     sendR0(pbuf,from); 
     break;
 
-    case 4: reading::measure(&motor,0xf); /*Collect All Readings*/
+    case 4: reading::measure(0xf); /*Collect All Readings*/
     case 3: /*Send Readings as Stored, Send R2*/ 
     sendR2(pbuf,from);
     break;
@@ -328,7 +332,7 @@ void handleMSGrcpt(uint8_t* pbuf, uint8_t len, uint8_t to, uint8_t from){
 
 void handleC5s(uint8_t* pbuf, uint8_t len, uint8_t from){
   uint8_t subcmd = (pbuf[6]>>4);
-  reading::measure(&motor,subcmd);
+  reading::measure(subcmd);
   sendR0(pbuf,from);
 }
 
@@ -340,9 +344,9 @@ void handleC8s(uint8_t* pbuf, uint8_t len){
   memcpy((uint8_t*) &arg1, pbuf+7, 4);
   Serial.printf("(%d)",arg1);
   switch(subcmd){
-    case 0: motor.stop(); break;
-    case 1: motor.step((int) arg1); break;
-    case 2: motor.reset(); break;
+    case 0: Serial.println("UNIMPLEMENTED STOP"); break;
+    case 1: motor::step((int) arg1); break;
+    case 2: motor::reset(); break;
   }
   Serial.println();
 }
@@ -412,20 +416,56 @@ uint8_t hexCharToNum(char c) {
 void processCMD(const char* cmd){
   if(memcmp(cmd,"motor",5) == 0){
     cmd+=6;
-    if(memcmp(cmd,"stop",4) == 0){
-      motor.stop();
-    }
     if(memcmp(cmd,"reset",5)==0){
-      motor.reset();
+      motor::reset();
     }
     if(memcmp(cmd,"move",4) == 0){
       cmd+=5;
       int step = atoi(cmd);
-      motor.step(step);
+      motor::step(step);
+    }
+    if(memcmp(cmd,"goto",4) == 0){
+      cmd+=5;
+      int step = atoi(cmd);
+      motor::goToStep(step);
+    }
+    if(memcmp(cmd,"read",4) == 0){
+      cmd+=5;
+      Serial.printf("Encoder Location: %d\n", pid::encoderPos);
+      Serial.printf("Step Location: %d\n",motor::getSteps());
+      Serial.printf("Current Goal: %f\n",pid::setpoint);
+    }
+    if(memcmp(cmd,"power",5) == 0){
+      Serial.printf("Power: %.2f\n",pid::output);
+    }
+    if(memcmp(cmd,"CTRL", 4) == 0){
+      cmd+=5;
+      if(memcmp(cmd,"power",5) == 0){
+        cmd+=6;
+        int power = atoi(cmd);
+        pid::driveMotor(power);
+        Serial.printf("Setting power to %d...\n",power);
+        delay(10000);
+      }
+      if(memcmp(cmd,"PID",3) == 0){
+        pid::runMotor = !pid::runMotor;
+        if(pid::runMotor){
+          Serial.println("PID ACTIVE");
+        }else{
+          Serial.println("PID INACTIVE");
+        }
+      }
     }
   }
   if(memcmp(cmd,"debug",5) == 0){
     cmd+=6;
+    if(memcmp(cmd,"limit",5) == 0){
+      if(motor::isPressed()){
+        Serial.println("IS NOT PRESSED");
+      }else{
+        Serial.println("IS PRESSED");
+      }
+    }
     if(memcmp(cmd,"simPacket",9) == 0){
       cmd+=10;
       Serial.print("Testing ");

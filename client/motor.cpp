@@ -1,139 +1,79 @@
 #include "motor.h"
 
-Motor::Motor(int stepCounts){
-    steps = stepCounts;
+long motor::steps = 0;
+
+void motor::motorThread(){
+    while(1){
+        if(pid::runMotor){
+            motor::reclaimPins();
+            pid::loopProcess();
+        }
+        sleep_ms(10);
+    }
 }
 
-Motor::Motor() : Motor(0){
-}
-
-void Motor::reclaimPins(){
+void motor::reclaimPins(){
     pinMode(LIMIT_PIN,INPUT);
 
-    pinMode(IN1, OUTPUT);
-    pinMode(IN2, OUTPUT);
-    pinMode(IN3, OUTPUT);
-    pinMode(IN4, OUTPUT);
+    pid::reclaimPins();
 }
 
-void Motor::reset(){
+void motor::reset(){
     /*
     * TODO: Code to go to the limit switch to go here
     */
-    while(isPressed()) backstep();
 
-    steps = 0;
+    pid::runMotor = 0;
+
+    while(isPressed()){
+        pid::driveMotor(RETRACT_SPEED);
+        delay(10);
+    }
+
+    pid::runMotor = 1;
+
+    digitalWrite(PINA, LOW);
+    digitalWrite(PINB, LOW);
+
+    delay(75);
+
+    steps = pid::encoderPos;
 }
 
-bool Motor::isPressed(){
+bool motor::isPressed(){
     /*Implement Is Pressed Code*/
     if(digitalRead(LIMIT_PIN) == HIGH) return true;
     return false;
 }
 
-void Motor::step(double distance, double radius){
+void motor::step(double distance, double radius){
     step(distance / (6.28 * radius));
 }
 
-void Motor::step(double radians){
+void motor::step(double radians){
     int stepCount = (int) (radians * 512 / 6.28);
     step(stepCount);
 }
 
-void Motor::step(int num){
-    if(num > 0){
-        for(int i = 0; i < num; i++) step();
-    }else{
-        for(int i = 0; i < -num; i++) backstep();
-    }
+void motor::step(int num){
+    pid::step(num);
 }
 
-void Motor::goToStep(int num){
-    Motor::step(num - steps);
+void motor::goToStep(int num){
+    pid::goTo(num + steps);
 }
 
-void Motor::stop(){
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, LOW);
-}
-
-void Motor::init(){
+void motor::init(){
     // Initialize the gpio library
-    Motor::reclaimPins();
+    motor::reclaimPins();
 
     // Motor reset
-    Motor::reset();
+    motor::reset();
 
-    // Set the initial state of the pins to LOW
-    Motor::stop();    
+    pid::init();
 }
 
-void Motor::step(){
-    // Step 4
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN3, HIGH);
-    digitalWrite(IN4, HIGH);
-    delay(3);
-
-    // Step 3
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN3, HIGH);
-    digitalWrite(IN4, LOW);
-    delay(3);
-
-    // Step 2
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, LOW);
-    delay(3);
-
-    // Step 1
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, HIGH);
-    delay(3);
-
-    steps++;
-}
-
-void Motor::backstep(){        
-    // Step 1
-    
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, HIGH);
-    delay(3); 
-
-    // Step 2
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, LOW);
-    delay(3);
-    
-    // Step 3
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
-    digitalWrite(IN3, HIGH);
-    digitalWrite(IN4, LOW);
-    delay(3);
-    
-    // Step 4
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
-    digitalWrite(IN3, HIGH);
-    digitalWrite(IN4, HIGH);
-    delay(3);
-
-    steps--;
-}
+long motor::getSteps(){return pid::encoderPos;} // Gets the number of steps
 
 namespace motor_utils{
     int metersToSteps(float dist){

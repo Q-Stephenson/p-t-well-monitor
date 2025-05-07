@@ -32,16 +32,14 @@ namespace reading{
     return len;
   }
 
-  int headToWater(Motor* motor){
-    if(motor == NULL) return -1; // DEF: -1
-    
-    (*motor).reset();
+  int headToWater(){    
+    motor::reset();
 
     int maxSteps = MAX_SPIN_COUNT;
     int minSteps = 0;
     int avgSteps = (maxSteps + minSteps)>>1;
     while(maxSteps > minSteps){
-      (*motor).goToStep(avgSteps);
+      motor::goToStep(avgSteps);
       delay(100);
       float R2 = readResistance();
       if(R2 > MIN_AIR_RESISTANCE /*IS IN AIR*/){
@@ -58,8 +56,8 @@ namespace reading{
     return avgSteps;
   }
 
-  void measure(Motor* motor,uint8_t subcmd){
-    if((subcmd>>3) & 1) stepDist = headToWater(motor); else headToWater(motor);
+  void measure(uint8_t subcmd){
+    if((subcmd>>3) & 1) stepDist = headToWater(); else headToWater();
     if((subcmd>>1) & 1){
       delay(100);
       SpC = (PLATE_DIST / (PLATE_AREA * readResistance()));
@@ -67,7 +65,7 @@ namespace reading{
     }
     /*TODO: READ TEMP AND PH*/
     tlm = millis();
-    (*motor).goToStep(0);
+    motor::goToStep(0);
   }
 
   uint16_t readV(){

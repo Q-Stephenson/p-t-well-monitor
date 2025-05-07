@@ -3,30 +3,21 @@
 #include <stdio.h>
 #include <hardware/gpio.h>
 #include <Arduino.h>
+#include "PID.h"
 
 #define LIMIT_PIN 15
 #define MAX_SPIN_COUNT 4096 /*TODO: FIX*/
+#define RETRACT_SPEED 230
 
 #define RADIUS 0.25 /*In Meters*/
 
-class Motor{
-private:
-    const static uint IN1 = 0;
-    const static uint IN2 = 1;
-    const static uint IN3 = 2;
-    const static uint IN4 = 3;
-    int steps = 0;
+namespace motor{
+    extern long steps; // Equals the encoderPos when the motor is at the limit switch, 0 of the system
 
-public:
-    Motor(); // Initializes the motor with steps=0;
-    Motor(int stepCount); // Initializes the number of steps as the stepCount
+    long getSteps(); // Gets the number of steps
 
-    int getSteps(){return steps;} // Gets the number of steps
-
+    void motorThread();
     void init(); // Initializes the motor
-    void step(); // Steps forward one step
-    void backstep(); // Backstep one step
-    void stop(); // Stops the motors activation
     void step(int num); // Steps num steps
     void step(double radians); // Steps radians
     void step(double meters, double rad); // steps the number of meters provided, given the radius of the wheel, presumes no slipping

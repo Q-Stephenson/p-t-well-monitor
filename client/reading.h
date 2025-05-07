@@ -26,8 +26,8 @@ namespace reading{
   uint16_t readV();
   float readResistance();
 
-  int headToWater(Motor* motor);
-  void measure(Motor* motor,uint8_t subcmd);
+  int headToWater();
+  void measure(uint8_t subcmd);
   uint8_t serialize(uint8_t* buf,uint8_t subcmd); //Returns: Length of Buf, Buf size: 4(number of measurements requested)
 };
 
