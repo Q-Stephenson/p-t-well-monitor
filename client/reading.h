@@ -11,10 +11,10 @@
 #define PIN_VIN 26
 
 #define CAPPED_MAX_RESISTANCE 0xffffff
-#define MIN_AIR_RESISTANCE 150000
+#define MIN_AIR_RESISTANCE 10000
 
-#define PLATE_AREA 1 /*TODO: REPLACE WITH TRUE VALUE*/
-#define PLATE_DIST 1 /*TODO: REPLACE WITH TRUE VALUE*/
+#define PLATE_AREA 0.5028 /*cm2*/
+#define PLATE_DIST 0.2014758 /*cm*/
 
 namespace reading{
   extern uint32_t stepDist; /*Number of steps from zeroed motor to the bottom of the well*/

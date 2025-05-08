@@ -24,6 +24,7 @@ namespace motor{
     void goToStep(int num);
     void reset(); // Resets the motor, TODO: uses the limit switch to zero
     void reclaimPins();
+    void vibrate(uint32_t ms); // SCARY
 
     bool isPressed();
 };

@@ -2,6 +2,17 @@
 
 long motor::steps = 0;
 
+void motor::vibrate(uint32_t ms){
+    pid::runMotor = 0;
+    for(int i = 0; i < ms / 6; i++){
+        pid::driveMotor(0xff);
+        sleep_ms(3);
+        pid::driveMotor(-0xff);
+        sleep_ms(3);
+    }
+    pid::runMotor = 1;
+}
+
 void motor::motorThread(){
     while(1){
         if(pid::runMotor){

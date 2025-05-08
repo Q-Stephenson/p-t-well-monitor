@@ -35,25 +35,23 @@ namespace reading{
   int headToWater(){    
     motor::reset();
 
-    int maxSteps = MAX_SPIN_COUNT;
-    int minSteps = 0;
-    int avgSteps = (maxSteps + minSteps)>>1;
-    while(maxSteps > minSteps){
-      motor::goToStep(avgSteps);
-      delay(100);
-      float R2 = readResistance();
-      if(R2 > MIN_AIR_RESISTANCE /*IS IN AIR*/){
-        Serial.printf("IN AIR: %f\n",R2);
-        minSteps = avgSteps;
-      }else{
-        /*IS IN WATER*/
-        Serial.printf("IN WATER: %f\n",R2);
-        maxSteps = avgSteps;
-      }
-      avgSteps = (maxSteps + minSteps)>>1;
+    pid::runMotor = 0;
+    sleep_ms(50);
+
+    float R2 = readResistance();
+
+    pid::driveMotor(-180);
+
+    while(R2 > MIN_AIR_RESISTANCE){
+      R2 = readResistance();
+      sleep_ms(10);
     }
 
-    return avgSteps;
+    sleep_ms(30);
+
+    pid::runMotor = 1;
+
+    return pid::encoderPos - motor::steps;
   }
 
   void measure(uint8_t subcmd){
