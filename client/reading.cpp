@@ -44,6 +44,7 @@ namespace reading{
 
     while(R2 > MIN_AIR_RESISTANCE){
       R2 = readResistance();
+      Serial.printf("Read: %.2f\n",R2);
       sleep_ms(10);
     }
 
