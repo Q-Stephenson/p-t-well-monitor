@@ -14,6 +14,7 @@
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <sodipodi:namedview
@@ -26,9 +27,9 @@
      inkscape:pagecheckerboard="1"
      inkscape:deskcolor="#505050"
      inkscape:document-units="px"
-     inkscape:zoom="1"
-     inkscape:cx="197"
-     inkscape:cy="244.5"
+     inkscape:zoom="1.5097656"
+     inkscape:cx="341.11255"
+     inkscape:cy="272.55887"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
@@ -53,23 +54,41 @@
        method="originald"
        linkedpaths="#path2,0,1|#path1,0,1|"
        id="path-effect3" />
-    <inkscape:path-effect
-       effect="fill_between_many"
-       method="originald"
-       linkedpaths="#rect2,0,1|#path5,0,1|"
-       id="path-effect4" />
-    <inkscape:path-effect
-       effect="fill_between_many"
-       method="originald"
-       linkedpaths="#path5,0,1|#rect2,0,1|"
-       id="path-effect5" />
   </defs>
+  <g
+     id="g16"
+     style="display:inline">
+    <path
+       id="path8"
+       style="fill:#000000;fill-opacity:1"
+       d="M 100,0 A 100,100 0 0 0 0,100 100,100 0 0 0 100,200 h 75 v 112 h 25 V 200 100 A 100,100 0 0 0 100,0 Z m 0,25 a 75,75 0 0 1 75,75 v 75 H 100 A 75,75 0 0 1 25,100 75,75 0 0 1 100,25 Z" />
+    <circle
+       style="fill:#42993d;fill-opacity:1;stroke-width:0.993419"
+       id="path14"
+       cx="100"
+       cy="100"
+       r="37.5" />
+  </g>
+  <use
+     x="0"
+     y="0"
+     xlink:href="#g16"
+     id="use16"
+     transform="rotate(-90,256,256)" />
+  <use
+     x="0"
+     y="0"
+     xlink:href="#g16"
+     id="use17"
+     transform="rotate(180,256,256)" />
+  <use
+     x="0"
+     y="0"
+     xlink:href="#use17"
+     id="use18"
+     transform="rotate(-90,256,256)" />
   <path
-     id="path5"
-     style="display:inline;fill:#3d6d99;fill-opacity:1;stroke-width:1.78268"
-     d="M -82.999999,128 A 128,128 0 0 0 -211,256 h 30 a 98,98 0 0 1 98.000001,-98 98,98 0 0 1 98,98 A 128,128 0 0 0 143,384 128,128 0 0 0 271,256 a 98,98 0 0 1 98,-98 98,98 0 0 1 98,98 128,128 0 0 0 128,128 128,128 0 0 0 128,-128 h -30 a 98,98 0 0 1 -98,98 98,98 0 0 1 -98,-98 128,128 0 0 0 -128,-128 128,128 0 0 0 -128,128 98,98 0 0 1 -98,98 98,98 0 0 1 -97.999999,-98 128,128 0 0 0 -128,-128 z" />
-  <path
-     id="rect2"
-     style="fill:none;stroke-width:1.74922"
-     d="M 0,0 H 512 V 512 H 0 Z" />
+     style="fill:#00ffff;fill-opacity:1;stroke-width:0.662354"
+     d="M 200.03105,256 V 200.03105 H 256 311.96896 V 256 311.96896 H 256 200.03105 Z"
+     id="path18" />
 </svg>
